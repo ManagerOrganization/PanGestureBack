@@ -24,4 +24,4 @@ PanGestureBack is created as category. You just send message `addPanGestureBack`
 ```
 
 ## 简介
-**PanGestureBack** 简单易于试用的横滑手势回退的实现。
+**PanGestureBack** 简单易于而使用的横滑手势回退的实现。
