@@ -19,7 +19,9 @@ PanGestureBack is created as category. You just send message `addPanGestureBack`
 ```objective-c
 	- (void)viewDidAppear:(BOOL)animated {
   		[super viewDidAppear:animated];
-  		[self addPanGestureBack];  
+  		[self addPanGestureBack];
+  		[self setPanGetureBackTextFont:[UIFont systemFontOfSize:18]];
+  		[self setPanGetureBackTextColor:[UIColor blackColor]];
 	}
 ```
 

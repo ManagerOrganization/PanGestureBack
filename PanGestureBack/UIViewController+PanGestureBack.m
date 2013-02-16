@@ -9,14 +9,13 @@
 #import <QuartzCore/QuartzCore.h>
 #import "UIViewController+PanGestureBack.h"
 
-@interface BackArrowView : UIImageView
+@interface PanGetureBackImageView : UIImageView
 
 @property (nonatomic, assign) BOOL isBackDirection;
 
 @end
 
-@implementation BackArrowView
-
+@implementation PanGetureBackImageView
 
 @end
 
@@ -24,18 +23,59 @@
 @implementation UIViewController (PanGestureBack)
 
 static CGFloat const kMinBackMovement = 80.f;
-static CGFloat const kBackgroundWidth = 200.f;
+static CGFloat const kBackgroundWidth = 220.f;
 
-static NSInteger const kBackLabelTag = 100001;
-static NSInteger const kBackArrowTag = 100002;
+static NSInteger const kBackgroundViewTag = 100001;
+static NSInteger const kBackLabelTag = 100002;
+static NSInteger const kBackImageTag = 100003;
 
-static BOOL isBackDirectionArrow = NO;
 
+static BOOL hasAddedPanGestureBack = NO;
+
+- (void)setPanGetureBackgroundColor:(UIColor *)color {
+  UIView *backgroundView  = (UIView *)[self.view viewWithTag:kBackgroundViewTag];
+  if (backgroundView) {
+    backgroundView.backgroundColor = color;
+  }
+}
+
+- (void)setPanGetureBackTextFont:(UIFont *)font {
+  UILabel *backLabel  = (UILabel *)[self.view viewWithTag:kBackLabelTag];
+  if (backLabel) {
+    backLabel.font = font;
+  }
+}
+
+- (void)setPanGetureBackText:(NSString *)text {
+  UILabel *backLabel  = (UILabel *)[self.view viewWithTag:kBackLabelTag];
+  if (backLabel) {
+    backLabel.text = text;
+  }
+}
+
+- (void)setPanGetureBackTextColor:(UIColor *)color {
+  UILabel *backLabel  = (UILabel *)[self.view viewWithTag:kBackLabelTag];
+  if (backLabel) {
+    backLabel.textColor = color;
+  }
+}
+
+- (void)setPanGetureBackImage:(UIImage *)image {
+  PanGetureBackImageView *backArrow  = (PanGetureBackImageView *)[self.view viewWithTag:kBackImageTag];
+  if (backArrow) {
+    backArrow.image = image;
+  }
+}
 
 - (void)addPanGestureBack {
   
   if (self.navigationController.viewControllers.count <= 1) {
     return ;
+  }
+
+  UIView *backgroundView  = (UIView *)[self.view viewWithTag:kBackgroundViewTag];
+  if (backgroundView) {
+    return;
   }
   
   UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self
@@ -46,14 +86,15 @@ static BOOL isBackDirectionArrow = NO;
   [self.view addGestureRecognizer:panGesture];
   
   // Back View
-  UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(-kBackgroundWidth,
-                                                                    0,
-                                                                    kBackgroundWidth,
-                                                                    self.view.bounds.size.height)];
+  backgroundView = [[UIView alloc] initWithFrame:CGRectMake(-kBackgroundWidth,
+                                                            0,
+                                                            kBackgroundWidth,
+                                                            self.view.bounds.size.height)];
   backgroundView.backgroundColor = [UIColor whiteColor];
-  
+  backgroundView.tag = kBackgroundViewTag;
   [self.view addSubview:backgroundView];
-  UILabel *backLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 30, 20)];
+
+  UILabel *backLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 40, 20)];
   backLabel.tag = kBackLabelTag;  
   backLabel.text = @"返回";
   backLabel.font = [UIFont fontWithName:@"Helvetica" size:14];
@@ -62,10 +103,10 @@ static BOOL isBackDirectionArrow = NO;
   [backgroundView addSubview:backLabel];
   
   UIImage *arrow = [UIImage imageNamed:@"back_arrow"];
-  BackArrowView *backArrow = [[BackArrowView alloc] initWithImage:arrow];
-  backArrow.tag = kBackArrowTag;
+  PanGetureBackImageView *backArrow = [[PanGetureBackImageView alloc] initWithImage:arrow];
+  backArrow.tag = kBackImageTag;
   backArrow.frame = CGRectMake(0, 0, 16, 12);
-  backArrow.center = CGPointMake(kBackgroundWidth - 45, self.view.bounds.size.width/2);
+  backArrow.center = CGPointMake(kBackgroundWidth - 55, self.view.bounds.size.width/2);
   [backgroundView addSubview:backArrow];
 }
 
@@ -74,7 +115,7 @@ static BOOL isBackDirectionArrow = NO;
   
   UIView *mainView = [gestureRecognizer view];
   UILabel *backLabel  = (UILabel *)[self.view viewWithTag:kBackLabelTag];
-  BackArrowView *backArrow  = (BackArrowView *)[self.view viewWithTag:kBackArrowTag];
+  PanGetureBackImageView *backArrow  = (PanGetureBackImageView *)[self.view viewWithTag:kBackImageTag];
   
   CGPoint translation = [gestureRecognizer translationInView:[mainView superview]];
   
@@ -83,13 +124,16 @@ static BOOL isBackDirectionArrow = NO;
     return ;
   }
   
-  if ([gestureRecognizer state] == UIGestureRecognizerStateBegan ||
-      [gestureRecognizer state] == UIGestureRecognizerStateChanged) {
+  if ([gestureRecognizer state] == UIGestureRecognizerStateBegan) {
+    //[backArrow layer].transform = CATransform3DMakeRotation(0, 0, 0, 0);
+  }
+  
+  if ([gestureRecognizer state] == UIGestureRecognizerStateChanged) {
     
     CGFloat movement = translation.x/3;
     [mainView setCenter:CGPointMake([mainView center].x + movement, [mainView center].y)];
     
-    if ([mainView center].x > self.view.bounds.size.width/2 + 60) {
+    if ([mainView center].x > self.view.bounds.size.width/2 + 70) {
       // fix the backLabel
       [backLabel setCenter:CGPointMake(backLabel.center.x - movement, backLabel.center.y)];
       [backArrow setCenter:CGPointMake(backArrow.center.x - movement, backArrow.center.y)];
@@ -98,22 +142,22 @@ static BOOL isBackDirectionArrow = NO;
     if ([mainView center].x > self.view.bounds.size.width/2 + kMinBackMovement && !backArrow.isBackDirection) {
       // rotate the arrow to back's direction
       backArrow.isBackDirection = YES;
-      [UIView animateWithDuration:0.3
+      [UIView animateWithDuration:0.3f
                        animations:
-       ^{
+      ^{
          [backArrow layer].transform = CATransform3DMakeRotation(M_PI , 0, 0, 1);
-       }
+      }
                        completion:NULL];
     }
     
     if ([mainView center].x < self.view.bounds.size.width/2 + kMinBackMovement && backArrow.isBackDirection) {
       // rotate the arrow to initial direction
       backArrow.isBackDirection = NO;
-      [UIView animateWithDuration:0.3
+      [UIView animateWithDuration:0.3f
                        animations:
-       ^{
+      ^{
          [backArrow layer].transform = CATransform3DMakeRotation(M_PI * 2, 0, 0, 1);
-       }
+      }
                        completion:NULL];
     }
     
@@ -121,22 +165,23 @@ static BOOL isBackDirectionArrow = NO;
   }
   
   if ([gestureRecognizer state] == UIGestureRecognizerStateEnded) {
-    
+    // return to initial state
     if ([mainView center].x > self.view.bounds.size.width/2 + kMinBackMovement) {
       [self.navigationController popViewControllerAnimated:YES];
       return ;
     }
-    
-    // return to initial state
+
     backArrow.isBackDirection = NO;
     [UIView animateWithDuration:[mainView center].x/1000
                      animations:
-     ^{
-       [backLabel setCenter:CGPointMake(kBackgroundWidth - 20, self.view.bounds.size.width/2)];
-       [backArrow setCenter:CGPointMake(kBackgroundWidth - 45, self.view.bounds.size.width/2)];
-       [mainView setCenter:CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2)];
-     }
-                     completion:NULL];
+    ^{
+        [backLabel setCenter:CGPointMake(kBackgroundWidth - 20, self.view.bounds.size.width/2)];
+        [backArrow setCenter:CGPointMake(kBackgroundWidth - 55, self.view.bounds.size.width/2)];
+        [backArrow layer].transform = CATransform3DMakeRotation(M_PI * 2, 0, 0, 1);
+        [mainView setCenter:CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2)];
+    }
+                    completion:NULL];
+    
   }
 }
 

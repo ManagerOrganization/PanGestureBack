@@ -9,10 +9,6 @@
 #import "ViewController.h"
 #import "UIViewController+PanGestureBack.h"
 
-@interface ViewController ()
-
-@end
-
 
 @implementation ViewController
 
@@ -38,7 +34,12 @@
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
-  [self addPanGestureBack];  
+  [self addPanGestureBack];
+  
+  // Config the text
+  [self setPanGetureBackTextFont:[UIFont systemFontOfSize:16]];
+  [self setPanGetureBackTextColor:[UIColor blackColor]];
+  [self setPanGetureBackText:@"Back"];
 }
 
 - (void)gotoNext {

@@ -12,4 +12,10 @@
 
 - (void)addPanGestureBack;
 
+- (void)setPanGetureBackgroundColor:(UIColor *)color;
+- (void)setPanGetureBackTextFont:(UIFont *)font;
+- (void)setPanGetureBackText:(NSString *)text;
+- (void)setPanGetureBackTextColor:(UIColor *)color;
+- (void)setPanGetureBackImage:(UIImage *)image;
+
 @end
