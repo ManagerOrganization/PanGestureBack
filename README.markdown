@@ -20,6 +20,7 @@ PanGestureBack is created as category. You just send message `addPanGestureBack`
 	- (void)viewDidAppear:(BOOL)animated {
   		[super viewDidAppear:animated];
   		[self addPanGestureBack];
+
   		[self setPanGetureBackTextFont:[UIFont systemFontOfSize:18]];
   		[self setPanGetureBackTextColor:[UIColor blackColor]];
 	}
