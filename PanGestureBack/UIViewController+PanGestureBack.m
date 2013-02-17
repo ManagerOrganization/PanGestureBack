@@ -29,9 +29,6 @@ static NSInteger const kBackgroundViewTag = 100001;
 static NSInteger const kBackLabelTag = 100002;
 static NSInteger const kBackImageTag = 100003;
 
-
-static BOOL hasAddedPanGestureBack = NO;
-
 - (void)setPanGetureBackgroundColor:(UIColor *)color {
   UIView *backgroundView  = (UIView *)[self.view viewWithTag:kBackgroundViewTag];
   if (backgroundView) {
