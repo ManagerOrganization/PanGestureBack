@@ -153,7 +153,7 @@ static NSInteger const kBackImageTag = 100003;
       [UIView animateWithDuration:0.3f
                        animations:
       ^{
-         [backArrow layer].transform = CATransform3DMakeRotation(M_PI * 2, 0, 0, 1);
+         [backArrow layer].transform = CATransform3DMakeRotation(0, 0, 0, 1);
       }
                        completion:NULL];
     }
